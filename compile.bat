@@ -1,0 +1,1 @@
+g++ main.cpp -o output -I"D:\software\npcap\npcap-sdk\Include" -L"D:\software\npcap\npcap-sdk\Lib\x64" -lwpcap -lws2_32
