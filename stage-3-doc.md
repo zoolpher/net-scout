@@ -65,3 +65,14 @@ The first byte of the IP header tells you — it contains two things packed into
     first 4 bits  → IP version (4 or 6)
     last 4 bits   → IHL (Internet Header Length)
 ```
+
+### Port
+
+- 443  → HTTPS
+- 80   → HTTP
+- 53   → DNS
+- 22   → SSH
+- 3306 → MySQL
+- 27017→ MongoDB
+- 3074 → Xbox Live
+- 5228 → Google Services

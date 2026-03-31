@@ -40,6 +40,12 @@ struct TcpUdpHeader {
     u_short urgent_pointer; // urgent pointer (TCP only)
 };
 
+// struct port_scan_info {
+//     u_int ip;           // source IP address
+//     int port_no;         // destination port number
+//     int count;           // number of attempts
+// };
+
 
 
 #endif

@@ -1,6 +1,9 @@
 #include <pcap.h>
 #include <iostream>
 
+#include <windows.h>
+#include <string>
+
 #include "headers.h"
 #include "parser.h"
 
@@ -78,7 +81,12 @@ int main() {
     //                 returns a HANDLE (like a file handle)
     //                 does NOT capture anything yet
     //---------------------------------------------------------------
-    pcap_t* interface_handler = pcap_open_live("\\Device\\NPF_{C8347FE4-229C-4801-B51B-D73E3E28A8C6}", 65536, 1, 1000, errbuf);   
+
+    const char* interface_name = "\\Device\\NPF_{C8347FE4-229C-4801-B51B-D73E3E28A8C6}";
+    int snaplen = 65536;            
+    int promisc = 1;                    
+    int timeout = 0;                 
+    pcap_t* interface_handler = pcap_open_live(interface_name, snaplen, promisc, timeout, errbuf);   
         // const char*  → interface name (the NPF_{GUID} one)
         // int          → snaplen - max bytes to capture per packet [0 to 65536]
         // int          → promisc - promiscuous mode (1=on, 0=off)
@@ -120,6 +128,8 @@ int main() {
     
     pcap_setfilter(interface_handler, &filter_program);                          
     // apply the compiled filter to the capture handle
+
+   
 
 
     //---------------------------------------- stage 2 ------------------------------------------
@@ -177,6 +187,16 @@ int main() {
         cout<<"Source port           : "<<get_app_name(ntohs(tcp_udp_header->src_port))<<"\n";
         cout<<"Destination port      : "<<get_app_name(ntohs(tcp_udp_header->dest_port));
         cout<<"\n-------------------------------------------------------------------------------\n\n";
+
+
+        //==============================================================================
+        //                                  STAGE 4 
+        //              Finding Unusual Activity: Port Scanning Detection
+        //==============================================================================
+        detect_port_scan(ip_header, tcp_udp_header);
+            // to store unique packets 
+            // ip_addr : <port_visited, port_visited, port_visited, ...>
+
     }
     cout<<"Finished capturing packets.\n";
     cout<<"Total packets captured: "<<count<<"\n\n";

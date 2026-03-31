@@ -1,6 +1,10 @@
 #include <pcap.h>
 #include <iostream>
 
+#include "parser.h"
+#include <unordered_map>
+#include <set>
+
 #include <string>
 using namespace std;
 
@@ -35,4 +39,28 @@ string get_app_name(u_short eth_type) {
         default: return "Unknown";
     }
     return "Unknown";
+}
+
+
+//----------------------------- STAGE 4 -------------------------------
+
+unordered_map<string, set<int>> port_scan_tracker;
+//   (src_ip) : {set of unique ports visited by that IP}
+
+void detect_port_scan(IPv4Header* ip_header, TcpUdpHeader* tcp_udp_header) {
+    // Implement logic to track connection attempts and identify port scans
+    // For example, maintain a map of source IPs to attempted ports and counts
+    // If a single IP attempts connections to many different ports in a short time, flag it as suspicious
+
+    string src_ip = inet_ntoa(*(struct in_addr*)&ip_header->src_ip);
+    port_scan_tracker[src_ip].insert(ntohs(tcp_udp_header->dest_port));
+
+    if (port_scan_tracker[src_ip].size() > 10) {
+        // print warning
+        cout << "🚨 PORT SCAN DETECTED\n";
+        cout << "Suspicious IP : " << src_ip << "\n";
+        cout << "Ports probed  : " << port_scan_tracker[src_ip].size() << "\n";
+
+        Sleep(5000);  // 5000 milliseconds = 5 seconds
+    }
 }
