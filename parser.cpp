@@ -61,6 +61,10 @@ void detect_port_scan(IPv4Header* ip_header, TcpUdpHeader* tcp_udp_header) {
         cout << "Suspicious IP : " << src_ip << "\n";
         cout << "Ports probed  : " << port_scan_tracker[src_ip].size() << "\n";
 
+        for (int port : port_scan_tracker[src_ip]) {
+            cout << port << " → " << get_app_name(port) << "\n";
+        }
+
         Sleep(5000);  // 5000 milliseconds = 5 seconds
     }
 }
