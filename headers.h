@@ -17,7 +17,7 @@ struct IPv4Header {
     u_char  version_ihl;    // version + header length
     u_char  tos;            // type of service
     u_short total_length;   // total length
-    u_short id;             // identification
+    u_short id;              // identification
     u_short flags_offset;   // flags + fragment offset
     u_char  ttl;            // time to live
     u_char  protocol;       // TCP=6, UDP=17, ICMP=1
@@ -30,10 +30,10 @@ struct IPv4Header {
 struct TcpUdpHeader {
     u_short src_port;       // source port
     u_short dest_port;      // destination port
-
     u_int   seq_num;        // sequence number (TCP only)
     u_int   ack_num;        // acknowledgment number (TCP only)
     u_char  data_offset;    // data offset (TCP only)
+
     u_char  flags;          // flags (TCP only)
     u_short window_size;    // window size (TCP only)
     u_short checksum;       // checksum

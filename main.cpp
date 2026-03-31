@@ -186,17 +186,39 @@ int main() {
         TcpUdpHeader *tcp_udp_header = (TcpUdpHeader*)(raw_data + 14 + ((ip_header->version_ihl & 0x0F) * 4));
         cout<<"Source port           : "<<get_app_name(ntohs(tcp_udp_header->src_port))<<"\n";
         cout<<"Destination port      : "<<get_app_name(ntohs(tcp_udp_header->dest_port));
-        cout<<"\n-------------------------------------------------------------------------------\n\n";
-
-
+        
+        
         //==============================================================================
         //                                  STAGE 4 
         //              Finding Unusual Activity: Port Scanning Detection
         //==============================================================================
         detect_port_scan(ip_header, tcp_udp_header);
-            // to store unique packets 
-            // ip_addr : <port_visited, port_visited, port_visited, ...>
-
+        // to store unique packets 
+        // ip_addr : <port_visited, port_visited, port_visited, ...>
+        
+        
+        
+        //==============================================================================
+        //                                  STAGE 5 
+        //                    TLS SNI (Server Name Indication) Parser
+        //==============================================================================
+        
+        // Calculate TCP header size and get to the payload
+        u_char tcp_size = (tcp_udp_header->data_offset >> 4) * 4;
+        
+        // Calculate IP header size and get to the payload
+        int ip_size = (ip_header->version_ihl & 0x0F) * 4;
+        
+        const u_char* payload = raw_data + 14 + ip_size + tcp_size;
+        int payload_len = header->len - 14 - ip_size - tcp_size;
+        
+        string sni = parse_sni(payload, payload_len, ip_header, tcp_udp_header);
+        if (!sni.empty()) {
+            cout << "\nSNI: " << sni << "\n";
+            Sleep(5000);  // 5000 milliseconds = 5 seconds
+        }
+        cout<<"\n-------------------------------------------------------------------------------\n\n";
+         
     }
     cout<<"Finished capturing packets.\n";
     cout<<"Total packets captured: "<<count<<"\n\n";
