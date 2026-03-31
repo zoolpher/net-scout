@@ -49,10 +49,12 @@ int main() {
     // Loop through the list of interfaces
     // Print the name of each interface
     //------------------------------------------------------------
+    int index = 0;
     for (pcap_if_t* d = alldevs; d != nullptr; d = d->next) {  
         // It prints << GUIDs Globally Unique IDentifier >>
         
-        printf("%s  |   %s\n", d->name, d->description ? d->description : "No description available");     
+        printf("%d. %s  |   %s\n", ++index, d->name, d->description ? d->description : "No description available"); 
+        cout<<"-------------------------------------------------------------------------------\n";    
     }
     
     
@@ -80,12 +82,26 @@ int main() {
     // pcap_open_live()  → opens a DOOR to the interface
     //                 returns a HANDLE (like a file handle)
     //                 does NOT capture anything yet
-    //---------------------------------------------------------------
+    //--------------------------------------------------------------- 
 
-    const char* interface_name = "\\Device\\NPF_{C8347FE4-229C-4801-B51B-D73E3E28A8C6}";
+
+    int network_interface_guid;
+    cout<<"Enter your network interface GUID number: ";
+    cin>>network_interface_guid;
+    
+    pcap_if_t* selected = alldevs;
+    for (int i = 1; i < network_interface_guid; i++) {
+        selected = selected->next;
+    }
+
+
+
+    const char* interface_name = selected->name;
     int snaplen = 65536;            
     int promisc = 1;                    
-    int timeout = 0;                 
+    int timeout = 0; 
+    
+                  
     pcap_t* interface_handler = pcap_open_live(interface_name, snaplen, promisc, timeout, errbuf);   
         // const char*  → interface name (the NPF_{GUID} one)
         // int          → snaplen - max bytes to capture per packet [0 to 65536]
